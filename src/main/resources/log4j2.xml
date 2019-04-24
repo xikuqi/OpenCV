@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration status="WARN" monitorInterval="300">
+	<properties>
+		<property name="LOG_HOME">logs</property>
+	</properties>
+	<Appenders>
+		<!-- 控制台 -->
+		<Console  name="console" target="SYSTEM_OUT">
+			<PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss}] %p [%c-%L] %m%n" />
+		</Console>
+		<!-- 默认日志文件 -->
+		<RollingFile name="appLog" fileName="${LOG_HOME}/app.log" filePattern="${LOG_HOME}/$${date:yyyy-MM-dd}/app.%d{yyyyMMdd}.%i.log.gz">
+			<PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss}] %p [%c{3}-%L] %m%n" />
+			<Policies>
+				<TimeBasedTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="512 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="1000" />
+		</RollingFile>
+
+		<!-- 数据错误日志文件 -->
+		<!--<RollingFile name="dataErrorLog" fileName="${LOG_HOME}/error.log" filePattern="${LOG_HOME}/$${date:yyyy-MM-dd}/error.%d{yyyyMMdd}.%i.log.gz">-->
+			<!--<PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss}] [%c-%L] %m%n" />-->
+			<!--<Policies>-->
+				<!--<TimeBasedTriggeringPolicy />-->
+				<!--<SizeBasedTriggeringPolicy size="512 MB" />-->
+			<!--</Policies>-->
+			<!--<DefaultRolloverStrategy max="1000" />-->
+		<!--</RollingFile>-->
+
+	</Appenders>
+
+	<Loggers>
+		<!-- 正式环境打开appLog，关闭console -->
+		<root level="debug">
+				<AppenderRef ref="console" />
+			<!--<AppenderRef ref="appLog" />-->
+		</root>
+		<!--<logger name="com.cnsugar" level="INFO" additivity="false">-->
+			<!--<appender-ref ref="dataErrorLog" />-->
+		<!--</logger>-->
+
+		<!-- 下面配置一些第三方包的日志过滤级别，用于避免刷屏-->
+		<Logger name="org.springframework" level="INFO" />
+		<Logger name="org.springframework.beans.factory.aspectj" level="WARN" />
+		<Logger name="org.springframework.transaction.interceptor" level="WARN" />
+		<Logger name="org.springframework.beans.factory.support" level="WARN" />
+		<Logger name="org.springframework.web.servlet" level="DEBUG" />
+		<Logger name="org.springframework.transaction" level="WARN" />
+		<Logger name="org.springframework.jdbc.datasource.DataSourceTransactionManager" level="WARN" />
+		<Logger name="org.springframework.transaction.support.AbstractPlatformTransactionManager" level="WARN" />
+		<Logger name="org.springframework.security" level="WARN" />
+		<Logger name="org.apache.commons" level="WARN" />
+		<Logger name="org.apache.kafka" level="WARN" />
+		<Logger name="org.apache.http" level="WARN" />
+		<Logger name="org.logicalcobwebs" level="WARN" />
+		<Logger name="httpclient" level="ERROR" />
+		<Logger name="net.sf.ehcache" level="WARN" />
+		<Logger name="org.apache.zookeeper" level="WARN" />
+		<Logger name="org.I0Itec" level="WARN" />
+		<Logger name="com.meetup.memcached" level="WARN" />
+		<Logger name="org.mongodb.driver" level="INFO" />
+		<Logger name="org.quartz.core" level="INFO" />
+		<Logger name="io.netty" level="INFO" />
+		<Logger name="net.rubyeye.xmemcached" level="WARN" />
+		<Logger name="com.google" level="WARN" />
+	</Loggers>
+</configuration>
