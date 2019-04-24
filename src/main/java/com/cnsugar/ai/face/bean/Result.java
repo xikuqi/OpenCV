@@ -7,7 +7,6 @@ import java.io.Serializable;
 /**
  * @Author Sugar
  * @Version 2019/4/22 17:50
- * @Copyright 上海云辰信息科技有限公司
  */
 public class Result implements Serializable {
     private String key;

@@ -18,7 +18,6 @@ import java.util.Properties;
 /**
  * @Author Sugar
  * @Version 2019/4/22 14:28
- * @Copyright 上海云辰信息科技有限公司
  */
 public class SeetafaceFactory {
     private static Logger logger = LoggerFactory.getLogger(SeetafaceFactory.class);

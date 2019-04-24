@@ -11,7 +11,6 @@ import java.util.List;
 /**
  * @Author Sugar
  * @Version 2019/4/23 16:38
- * @Copyright 上海云辰信息科技有限公司
  */
 public class SqliteUtils {
     private static final Logger logger = LoggerFactory.getLogger(SqliteUtils.class);

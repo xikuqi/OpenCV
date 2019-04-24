@@ -6,7 +6,6 @@ import java.sql.SQLException;
 /**
  * @Author Sugar
  * @Version 2019/4/23 17:46
- * @Copyright 上海云辰信息科技有限公司
  */
 public interface RowMapper<T> {
 
