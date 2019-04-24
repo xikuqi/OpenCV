@@ -4,6 +4,7 @@ import com.cnsugar.ai.face.bean.FaceIndex;
 import com.cnsugar.ai.face.bean.Result;
 import com.cnsugar.ai.face.dao.FaceDao;
 import com.cnsugar.ai.face.utils.ImageUtils;
+import com.seetaface2.SeetaFace2JNI;
 import com.seetaface2.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,8 @@ public class FaceHelper {
     private static Logger logger = LoggerFactory.getLogger(FaceHelper.class);
 
     private static int CROP_SIZE = 256 * 256 * 3;
+
+    private static SeetaFace2JNI seeta = SeetafaceFactory.getSeetaJNI();
 
     /**
      * 人脸比对
@@ -67,7 +70,7 @@ public class FaceHelper {
         SeetaImageData imageData2 = new SeetaImageData(image2.getWidth(), image2.getHeight(), 3);
         imageData2.data = ImageUtils.getMatrixBGR(image2);
 
-        return SeetafaceFactory.getSeetaJNI().compare(imageData1, imageData2);
+        return seeta.compare(imageData1, imageData2);
     }
 
     /**
@@ -83,7 +86,7 @@ public class FaceHelper {
         //先对人脸进行裁剪
         SeetaImageData imageData = new SeetaImageData(image.getWidth(), image.getHeight(), 3);
         imageData.data = ImageUtils.getMatrixBGR(image);
-        byte[] bytes = SeetafaceFactory.getSeetaJNI().crop(imageData);
+        byte[] bytes = seeta.crop(imageData);
 
         if (bytes == null || bytes.length != CROP_SIZE) {
             logger.info("register face fail: key={}, error=no valid face", key);
@@ -91,7 +94,7 @@ public class FaceHelper {
         }
         imageData = new SeetaImageData(256, 256, 3);
         imageData.data = bytes;
-        int index = SeetafaceFactory.getSeetaJNI().register(imageData);
+        int index = seeta.register(imageData);
         if (index < 0) {
             logger.info("register face fail: key={}, index={}", key, index);
             return false;
@@ -130,7 +133,7 @@ public class FaceHelper {
         }
         SeetaImageData imageData = new SeetaImageData(image.getWidth(), image.getHeight(), 3);
         imageData.data = ImageUtils.getMatrixBGR(image);
-        RecognizeResult rr = SeetafaceFactory.getSeetaJNI().recognize(imageData);
+        RecognizeResult rr = seeta.recognize(imageData);
 
         if (rr == null || rr.index == -1) {
             return null;
@@ -163,7 +166,7 @@ public class FaceHelper {
         }
         SeetaImageData imageData = new SeetaImageData(image.getWidth(), image.getHeight(), 3);
         imageData.data = ImageUtils.getMatrixBGR(image);
-        byte[] bytes = SeetafaceFactory.getSeetaJNI().crop(imageData);
+        byte[] bytes = seeta.crop(imageData);
         if (bytes == null || bytes.length != CROP_SIZE) {
             return null;
         }
@@ -193,7 +196,7 @@ public class FaceHelper {
         }
         SeetaImageData imageData = new SeetaImageData(image.getWidth(), image.getHeight(), 3);
         imageData.data = ImageUtils.getMatrixBGR(image);
-        return SeetafaceFactory.getSeetaJNI().detect(imageData);
+        return seeta.detect(imageData);
     }
 
     /**
@@ -208,13 +211,13 @@ public class FaceHelper {
         }
         SeetaImageData imageData = new SeetaImageData(image.getWidth(), image.getHeight(), 3);
         imageData.data = ImageUtils.getMatrixBGR(image);
-        SeetaRect[] rects = SeetafaceFactory.getSeetaJNI().detect(imageData);
+        SeetaRect[] rects = seeta.detect(imageData);
         if (rects == null) {
             return null;
         }
         FaceLandmark faces = new FaceLandmark();
         faces.rects = rects;
-        faces.points = SeetafaceFactory.getSeetaJNI().detect(imageData, rects);
+        faces.points = seeta.detect(imageData, rects);
         return faces;
     }
 }
