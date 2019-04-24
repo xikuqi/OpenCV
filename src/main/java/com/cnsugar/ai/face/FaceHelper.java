@@ -78,7 +78,7 @@ public class FaceHelper {
      *
      * @param key 人脸照片唯一标识
      * @param img 人脸照片
-     * @return -1表示失败
+     * @return
      * @throws IOException
      */
     public static boolean register(String key, byte[] img) throws IOException {
