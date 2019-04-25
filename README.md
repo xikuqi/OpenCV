@@ -5,13 +5,33 @@
 seetaface2：https://github.com/seetaface/SeetaFaceEngine2
 
 #### 环境配置
-1、下载model（https://pan.baidu.com/s/1HJj8PEnv3SOu6ZxVpAHPXg）文件到本地，并解压出来；
+1、下载model（ https://pan.baidu.com/s/1HJj8PEnv3SOu6ZxVpAHPXg ） 文件到本地，并解压出来；
 
-2、下载doc目录中对应的lib包到本地并解压：Windows(64位)环境下载lib-win-x64.zip、Linux(64位)下载lib-linux-x64.tar.bz2；
+2、下载doc目录中对应的lib包到本地并解压：Windows(64位)环境下载lib-win-x64.zip、Linux(64位)下载lib-linux-x64.tar.bz2，Linux环境还需要安装依赖库，详见：https://my.oschina.net/u/1580184/blog/3042404 ；
 
 3、将doc中的faces-data.db下载到本地；（PS：如果不需要使用1:N人脸搜索,不需要此文件，需要将seetafce.properties中的sqlite.db.file配置注释掉）；
 
 4、将src/main/resources/中的seetaface.properties文件放到项目的resources根目录中；
+
+```properties
+#linux系统中依赖的lib名称
+libs=holiday,SeetaFaceDetector200,SeetaPointDetector200,SeetaFaceRecognizer200,SeetaFaceCropper200,SeetaFace2JNI
+#Windows系统中依赖的lib名称
+#libs=libgcc_s_sjlj-1,libeay32,libquadmath-0,ssleay32,libgfortran-3,libopenblas,holiday,SeetaFaceDetector200,SeetaPointDetector200,SeetaFaceRecognizer200,SeetaFaceCropper200,SeetaFace2JNI
+
+#lib存放目录
+libs.path=/usr/local/seetaface2/lib
+#model存放目录
+bindata.dir=/usr/local/seetaface2/bindata
+
+##sqlite配置(如果不用1:N人脸搜索功能，请删除下面5项sqlite开头的配置)
+sqlite.db.file=/data/faces-data.db
+sqlite.conn.maxTotal=50
+sqlite.conn.maxIdle=5
+sqlite.conn.minIdle=0
+sqlite.conn.maxWaitMillis=60000
+```
+
 
 5、将seetaface-1.0.jar和依赖包导入到项目中，pom如下:
 
@@ -55,7 +75,7 @@ seetaface2：https://github.com/seetaface/SeetaFaceEngine2
        </dependency>
    </dependencies> 
 ```
-   
+
 6、调用FaceHelper中的方法。
 
 
@@ -130,7 +150,7 @@ seetaface2：https://github.com/seetaface/SeetaFaceEngine2
 ```
 
 - 示例代码：1:N人脸搜索
-先调用FaceHelper.register()方法将人脸图片注册到seetaface2的人脸库(内存)中，同时会将图片存在sqlite数据库中进行持久化，下次应用程序启动时会自动从sqlite中把图片读取出来重新注册到seetafce2的内存库中
+  先调用FaceHelper.register()方法将人脸图片注册到seetaface2的人脸库(内存)中，同时会将图片存在sqlite数据库中进行持久化，下次应用程序启动时会自动从sqlite中把图片读取出来重新注册到seetafce2的内存库中
 
 ```java
     @org.junit.Test
