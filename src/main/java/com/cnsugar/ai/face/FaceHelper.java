@@ -74,7 +74,7 @@ public class FaceHelper {
     }
 
     /**
-     * 注册人脸
+     * 注册人脸(会对人脸进行裁剪)
      *
      * @param key 人脸照片唯一标识
      * @param img 人脸照片
@@ -94,6 +94,31 @@ public class FaceHelper {
         }
         imageData = new SeetaImageData(256, 256, 3);
         imageData.data = bytes;
+        int index = seeta.register(imageData);
+        if (index < 0) {
+            logger.info("register face fail: key={}, index={}", key, index);
+            return false;
+        }
+        FaceIndex face = new FaceIndex();
+        face.setKey(key);
+        face.setImgData(imageData.data);
+        face.setIndex(index);
+        FaceDao.saveOrUpdate(face);
+        logger.info("Register face success: key={}, index={}", key, index);
+        return true;
+    }
+
+    /**
+     * 注册人脸(不裁剪图片)
+     *
+     * @param key 人脸照片唯一标识
+     * @param image 人脸照片
+     * @return
+     * @throws IOException
+     */
+    public static boolean register(String key, BufferedImage image) throws IOException {
+        SeetaImageData imageData = new SeetaImageData(image.getWidth(), image.getHeight(), 3);
+        imageData.data = ImageUtils.getMatrixBGR(image);
         int index = seeta.register(imageData);
         if (index < 0) {
             logger.info("register face fail: key={}, index={}", key, index);

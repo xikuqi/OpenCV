@@ -94,13 +94,21 @@ sqlite.conn.maxWaitMillis=60000
     float compare(BufferedImage image1, BufferedImage image2);
     
     /**
-     * 注册人脸
+     * 注册人脸（会裁剪图片）
      *
      * @param key 人脸照片唯一标识
      * @param img 人脸照片
      * @return 
      */
-    boolean register(String key, byte[] img);    
+    boolean register(String key, byte[] img);
+    /**
+     * 注册人脸（不裁剪图片）
+     *
+     * @param key 人脸照片唯一标识
+     * @param image 人脸照片
+     * @return 
+     */
+    boolean register(String key, BufferedImage image)
     
     /**
      * 搜索人脸
