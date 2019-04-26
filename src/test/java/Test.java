@@ -1,6 +1,7 @@
 import com.cnsugar.ai.face.FaceHelper;
 import com.cnsugar.ai.face.SeetafaceBuilder;
 import com.cnsugar.ai.face.bean.Result;
+import com.seetaface2.model.SeetaRect;
 import org.apache.commons.io.FileUtils;
 
 import javax.imageio.ImageIO;
@@ -30,26 +31,32 @@ public class Test {
                 e.printStackTrace();
             }
         }
+        System.out.println(1);
     }
 
     @org.junit.Test
     public void testSearch() throws IOException {
-        while (SeetafaceBuilder.getFacedbStatus() != SeetafaceBuilder.FacedbStatus.OK) {
-            //等待初始完成
-            if (SeetafaceBuilder.getFacedbStatus() == SeetafaceBuilder.FacedbStatus.INACTIV) {
-                System.out.println("人脸数据库未配置");
-                System.exit(1);
-            }
-        }
         long l = System.currentTimeMillis();
         Result result = FaceHelper.search(FileUtils.readFileToByteArray(new File("F:\\ai\\gtl.jpg")));
         System.out.println("搜索结果：" + result + "， 耗时：" + (System.currentTimeMillis() - l));
     }
 
     @org.junit.Test
+    public void testDetect() throws IOException {
+        SeetaRect[] rects = FaceHelper.detect(FileUtils.readFileToByteArray(new File("F:\\ai\\刘诗诗-bbbbbbbbbbbbbbbbbb.jpg")));
+        if (rects != null) {
+            for (SeetaRect rect : rects) {
+                System.out.println("x="+rect.x+", y="+rect.y+", width="+rect.width+", height="+rect.height);
+            }
+        }
+    }
+
+    @org.junit.Test
     public void testCorp() throws IOException {
-        BufferedImage image = FaceHelper.crop(FileUtils.readFileToByteArray(new File("F:\\ai\\corp-face.jpg")));
-        ImageIO.write(image, "jpg", new File("F:\\ai\\corp-face1.jpg"));
+        BufferedImage image = FaceHelper.crop(FileUtils.readFileToByteArray(new File("F:\\ai\\刘诗诗-bbbbbbbbbbbbbbbbbb.jpg")));
+        if (image != null) {
+            ImageIO.write(image, "jpg", new File("F:\\ai\\corp-face1.jpg"));
+        }
     }
 
     @org.junit.Test

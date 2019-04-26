@@ -82,6 +82,9 @@ public class FaceHelper {
      * @throws IOException
      */
     public static boolean register(String key, byte[] img) throws IOException {
+        if (!SeetafaceBuilder.isInitialized()) {
+            return false;
+        }
         BufferedImage image = ImageIO.read(new ByteArrayInputStream(img));
         //先对人脸进行裁剪
         SeetaImageData imageData = new SeetaImageData(image.getWidth(), image.getHeight(), 3);
@@ -117,6 +120,9 @@ public class FaceHelper {
      * @throws IOException
      */
     public static boolean register(String key, BufferedImage image) throws IOException {
+        if (!SeetafaceBuilder.isInitialized()) {
+            return false;
+        }
         SeetaImageData imageData = new SeetaImageData(image.getWidth(), image.getHeight(), 3);
         imageData.data = ImageUtils.getMatrixBGR(image);
         int index = seeta.register(imageData);
@@ -154,6 +160,9 @@ public class FaceHelper {
      */
     public static Result search(BufferedImage image) {
         if (image == null) {
+            return null;
+        }
+        if (!SeetafaceBuilder.isInitialized()) {
             return null;
         }
         SeetaImageData imageData = new SeetaImageData(image.getWidth(), image.getHeight(), 3);
