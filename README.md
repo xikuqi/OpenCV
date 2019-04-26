@@ -145,6 +145,12 @@ sqlite.conn.maxWaitMillis=60000
      */
     FaceLandmark detectLandmark(BufferedImage image);
     
+    /**
+     * 删除已注册的人脸
+     * @param keys
+     */
+    void removeRegister(String... keys);    
+    
 ```
 
 - 示例代码：1:1人脸比对
@@ -177,8 +183,12 @@ sqlite.conn.maxWaitMillis=60000
 
     @org.junit.Test
     public void testSearch() throws IOException {
-        while (!SeetafaceFactory.face_db_init) {
+        while (SeetafaceBuilder.getFacedbStatus() != SeetafaceBuilder.FacedbStatus.OK) {
             //程序启动时要等待历史注册的人脸加载到内存库中
+            if (SeetafaceBuilder.getFacedbStatus() == SeetafaceBuilder.FacedbStatus.INACTIV) {
+                System.out.println("人脸数据库未配置");
+                System.exit(1);
+            }
         }
         long l = System.currentTimeMillis();
         Result result = FaceHelper.search(FileUtils.readFileToByteArray(new File("F:\\ai\\gtl.jpg")));
