@@ -1,5 +1,5 @@
 import com.cnsugar.ai.face.FaceHelper;
-import com.cnsugar.ai.face.SeetafaceFactory;
+import com.cnsugar.ai.face.SeetafaceBuilder;
 import com.cnsugar.ai.face.bean.Result;
 import org.apache.commons.io.FileUtils;
 
@@ -34,8 +34,12 @@ public class Test {
 
     @org.junit.Test
     public void testSearch() throws IOException {
-        while (!SeetafaceFactory.face_db_init) {
+        while (SeetafaceBuilder.getFacedbStatus() != SeetafaceBuilder.FacedbStatus.OK) {
             //等待初始完成
+            if (SeetafaceBuilder.getFacedbStatus() == SeetafaceBuilder.FacedbStatus.INACTIV) {
+                System.out.println("人脸数据库未配置");
+                System.exit(1);
+            }
         }
         long l = System.currentTimeMillis();
         Result result = FaceHelper.search(FileUtils.readFileToByteArray(new File("F:\\ai\\gtl.jpg")));
@@ -44,7 +48,12 @@ public class Test {
 
     @org.junit.Test
     public void testCorp() throws IOException {
-        BufferedImage image = FaceHelper.crop(FileUtils.readFileToByteArray(new File("F:\\ai\\jobs0.jpg")));
-        ImageIO.write(image, "jpg", new File("F:\\ai\\corp-face.jpg"));
+        BufferedImage image = FaceHelper.crop(FileUtils.readFileToByteArray(new File("F:\\ai\\corp-face.jpg")));
+        ImageIO.write(image, "jpg", new File("F:\\ai\\corp-face1.jpg"));
+    }
+
+    @org.junit.Test
+    public void testDelete() {
+        FaceHelper.removeRegister("Angelababy.jpg", "乔欣.jpg");
     }
 }

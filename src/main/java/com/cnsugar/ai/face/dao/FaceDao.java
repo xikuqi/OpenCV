@@ -75,4 +75,20 @@ public class FaceDao {
         return null;
     }
 
+    public static boolean deleteFaceImg(String... keys) {
+        StringBuilder in = new StringBuilder();
+        for (int i = 0; i < keys.length; i++) {
+            if (i > 0) {
+                in.append(",");
+            }
+            in.append("?");
+        }
+        try {
+            SqliteUtils.executeUpdate("DELETE FROM face_img where key in ("+in+")", keys);
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

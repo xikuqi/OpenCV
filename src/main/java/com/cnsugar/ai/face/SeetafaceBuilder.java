@@ -19,13 +19,45 @@ import java.util.Properties;
  * @Author Sugar
  * @Version 2019/4/22 14:28
  */
-public class SeetafaceFactory {
-    private static Logger logger = LoggerFactory.getLogger(SeetafaceFactory.class);
+public class SeetafaceBuilder {
+    private static Logger logger = LoggerFactory.getLogger(SeetafaceBuilder.class);
     private static SeetaFace2JNI seeta = null;
 
-    public volatile static Boolean face_db_init = false;
+    public enum FacedbStatus {
+        READY, LOADING, OK, INACTIV;
+    }
+
+    private volatile static FacedbStatus face_db_status = FacedbStatus.READY;
 
     static {
+        init();
+    }
+
+    public static SeetaFace2JNI build() {
+        if (seeta == null) {
+            synchronized (SeetafaceBuilder.class) {
+                if (seeta != null) {
+                    return seeta;
+                }
+                init();
+            }
+        }
+        return seeta;
+    }
+
+    /**
+     * 建立人脸库索引
+     */
+    public static void buildIndex() {
+        face_db_status = FacedbStatus.READY;
+        new Thread(() -> loadFaceDb()).start();
+    }
+
+    public static FacedbStatus getFacedbStatus() {
+        return face_db_status;
+    }
+
+    private static void init() {
         Properties prop = getConfig();
         System.setProperty("java.library.path", prop.getProperty("libs.path", ""));
         try {//使java.library.path生效
@@ -46,48 +78,40 @@ public class SeetafaceFactory {
         logger.debug("bindata dir: {}", bindata);
         seeta = new SeetaFace2JNI();
         seeta.initModel(bindata);
+        String db_file = prop.getProperty("sqlite.db.file");
+        if (db_file != null) {
+            System.setProperty("seetaface.db", db_file);
+            System.setProperty(JdbcPool.MAX_TOTAL, prop.getProperty(JdbcPool.MAX_TOTAL));
+            System.setProperty(JdbcPool.MAX_IDLE, prop.getProperty(JdbcPool.MAX_IDLE));
+            System.setProperty(JdbcPool.MIN_IDLE, prop.getProperty(JdbcPool.MIN_IDLE));
+            System.setProperty(JdbcPool.MAX_WAIT_MILLIS, prop.getProperty(JdbcPool.MAX_WAIT_MILLIS));
 
-        new Thread(() -> loadFaceDb(prop)).start();
-        logger.info("Seetaface init completed!!!");
-    }
-
-    private static Properties getConfig() {
-        Properties properties = new Properties();
-        String location = "classpath:/seetaface.properties";
-        try (InputStream is = new DefaultResourceLoader().getResource(location).getInputStream()) {
-            properties.load(is);
-            logger.debug("seetaface config: {}", properties.toString());
-        } catch (IOException ex) {
-            logger.error("Could not load property file:" + location, ex);
+            new Thread(() -> loadFaceDb()).start();
+        } else {
+            face_db_status = FacedbStatus.INACTIV;
+            logger.warn("没有配置sqlite.db.file，人脸注册(register)及人脸搜索(1 v N)功能将无法使用!!!");
         }
-        return properties;
-    }
-
-    public static SeetaFace2JNI getSeetaJNI() {
-        return seeta;
+        logger.info("Seetaface init completed!!!");
     }
 
     /**
      * 加载人脸库
      */
-    public synchronized static void loadFaceDb(Properties prop) {
-        if (face_db_init) {
+    private synchronized static void loadFaceDb() {
+        if (face_db_status != FacedbStatus.READY) {
             return;
         }
-        String db_file = prop.getProperty("sqlite.db.file");
-        if (db_file == null) {
-            logger.warn("没有配置sqlite.db.file，人脸注册(register)及人脸搜索(1 v N)功能将无法使用!!!");
+        if (System.getProperty("seetaface.db") == null) {
+            face_db_status = FacedbStatus.INACTIV;
+            logger.error("没有配置sqlite.db.file!!!");
             return;
         }
+
+        face_db_status = FacedbStatus.LOADING;
         logger.info("load face data...");
-        System.setProperty("seetaface.db", db_file);
-        System.setProperty(JdbcPool.MAX_TOTAL, prop.getProperty(JdbcPool.MAX_TOTAL));
-        System.setProperty(JdbcPool.MAX_IDLE, prop.getProperty(JdbcPool.MAX_IDLE));
-        System.setProperty(JdbcPool.MIN_IDLE, prop.getProperty(JdbcPool.MIN_IDLE));
-        System.setProperty(JdbcPool.MAX_WAIT_MILLIS, prop.getProperty(JdbcPool.MAX_WAIT_MILLIS));
-        int pageNo = 0, pageSize = 100;
-//        seeta.clear();
+        seeta.clear();
         FaceDao.clearIndex();
+        int pageNo = 0, pageSize = 100;
         while (true) {
             List<FaceIndex> list = FaceDao.findFaceImgs(pageNo, pageSize);
             if (list == null) {
@@ -105,7 +129,7 @@ public class SeetafaceFactory {
             }
             pageNo++;
         }
-        face_db_init = true;
+        face_db_status = FacedbStatus.OK;
     }
 
     /**
@@ -116,10 +140,10 @@ public class SeetafaceFactory {
      * @return
      * @throws IOException
      */
-    public static void register(String key, FaceIndex face) {
+    private static void register(String key, FaceIndex face) {
         SeetaImageData imageData = new SeetaImageData(256, 256, 3);
         imageData.data = face.getImgData();
-        int index = getSeetaJNI().register(imageData);
+        int index = seeta.register(imageData);
         if (index < 0) {
             logger.info("Register face fail: key={}, index={}", key, index);
             return;
@@ -129,5 +153,17 @@ public class SeetafaceFactory {
         faceIndex.setIndex(index);
         FaceDao.saveOrUpdateIndex(faceIndex);
         logger.info("Register face success: key={}, index={}", key, index);
+    }
+
+    private static Properties getConfig() {
+        Properties properties = new Properties();
+        String location = "classpath:/seetaface.properties";
+        try (InputStream is = new DefaultResourceLoader().getResource(location).getInputStream()) {
+            properties.load(is);
+            logger.debug("seetaface config: {}", properties.toString());
+        } catch (IOException ex) {
+            logger.error("Could not load property file:" + location, ex);
+        }
+        return properties;
     }
 }

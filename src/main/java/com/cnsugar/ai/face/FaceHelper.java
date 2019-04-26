@@ -24,7 +24,7 @@ public class FaceHelper {
 
     private static int CROP_SIZE = 256 * 256 * 3;
 
-    private static SeetaFace2JNI seeta = SeetafaceFactory.getSeetaJNI();
+    private static SeetaFace2JNI seeta = SeetafaceBuilder.build();
 
     /**
      * 人脸比对
@@ -244,5 +244,14 @@ public class FaceHelper {
         faces.rects = rects;
         faces.points = seeta.detect(imageData, rects);
         return faces;
+    }
+
+    /**
+     * 删除已注册的人脸
+     * @param keys
+     */
+    public static void removeRegister(String... keys) {
+        FaceDao.deleteFaceImg(keys);//删除数据库的人脸
+        SeetafaceBuilder.buildIndex();//重新建立索引
     }
 }
