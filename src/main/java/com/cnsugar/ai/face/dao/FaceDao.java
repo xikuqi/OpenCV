@@ -91,4 +91,14 @@ public class FaceDao {
         }
         return false;
     }
+
+    public static boolean clearImg() {
+        try {
+            SqliteUtils.executeUpdate("DELETE FROM face_img");
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

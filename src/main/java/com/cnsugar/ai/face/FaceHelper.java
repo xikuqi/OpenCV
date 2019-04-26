@@ -254,4 +254,13 @@ public class FaceHelper {
         FaceDao.deleteFaceImg(keys);//删除数据库的人脸
         SeetafaceBuilder.buildIndex();//重新建立索引
     }
+
+    /**
+     * 清除人脸库数据
+     */
+    public static void clear() {
+        FaceDao.clearImg();
+        FaceDao.clearIndex();
+        seeta.clear();
+    }
 }
