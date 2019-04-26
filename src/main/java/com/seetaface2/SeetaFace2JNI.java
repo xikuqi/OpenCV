@@ -16,7 +16,7 @@ public class SeetaFace2JNI {
      * @return
      */
 
-    public native boolean initModel(String modelDir);
+    public native synchronized boolean initModel(String modelDir);
 
     /**
      * 检测人脸
@@ -24,7 +24,7 @@ public class SeetaFace2JNI {
      * @param img
      * @return
      */
-    public native SeetaRect[] detect(SeetaImageData img);
+    public native synchronized SeetaRect[] detect(SeetaImageData img);
 
     /**
      * 特征对齐
@@ -33,7 +33,7 @@ public class SeetaFace2JNI {
      * @param faces
      * @return
      */
-    public native SeetaPointF[] detect(SeetaImageData img, SeetaRect[] faces);
+    public native synchronized SeetaPointF[] detect(SeetaImageData img, SeetaRect[] faces);
 
     /**
      * 1 v 1 人脸比对
@@ -42,7 +42,7 @@ public class SeetaFace2JNI {
      * @param img2
      * @return 相似度范围在0~1,返回负数表示出错
      */
-    public native float compare(SeetaImageData img1, SeetaImageData img2);
+    public native synchronized float compare(SeetaImageData img1, SeetaImageData img2);
 
     /**
      * 注册人脸
@@ -50,7 +50,7 @@ public class SeetaFace2JNI {
      * @param img
      * @return The returned value is the index of face database. Reture -1 if failed
      */
-    public native int register(SeetaImageData img);
+    public native synchronized int register(SeetaImageData img);
 
     /**
      * Recognize face and get the most similar face index
@@ -58,13 +58,13 @@ public class SeetaFace2JNI {
      * @param img
      * @return index saves the index of face databese, which is same as the retured value by Register. similar saves the most similar.
      */
-    public native RecognizeResult recognize(SeetaImageData img);
+    public native synchronized RecognizeResult recognize(SeetaImageData img);
 
 
     /**
      * Clear face database
      */
-    public native void clear();
+    public native synchronized void clear();
 
 
     /**
@@ -73,5 +73,5 @@ public class SeetaFace2JNI {
      * @param img
      * @return The returned value is face data. Reture null if failed
      */
-    public native byte[] crop(SeetaImageData img);
-}  
+    public native synchronized byte[] crop(SeetaImageData img);
+}

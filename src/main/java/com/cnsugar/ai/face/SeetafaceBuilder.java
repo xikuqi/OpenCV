@@ -46,8 +46,8 @@ public class SeetafaceBuilder {
      */
     public static void buildIndex() {
         synchronized (SeetafaceBuilder.class) {
-            while (face_db_status == FacedbStatus.LOADING) {
-                //等待上一次执行完成
+            while (face_db_status == FacedbStatus.LOADING || face_db_status == FacedbStatus.READY) {
+                //等待之前的任务初始化完成
             }
             face_db_status = FacedbStatus.READY;
             new Thread(() -> {
@@ -55,17 +55,6 @@ public class SeetafaceBuilder {
                 loadFaceDb();
             }).start();
         }
-    }
-
-    /**
-     * 判断人脸数据库是否初始化完成
-     * @return
-     */
-    public static boolean isInitialized () {
-        while (face_db_status == FacedbStatus.LOADING) {
-            //等待初始化完成
-        }
-        return face_db_status == FacedbStatus.OK;
     }
 
     private static void init() {
