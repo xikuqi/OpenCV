@@ -46,9 +46,9 @@ sqlite.conn.maxWaitMillis=60000
        <dependency>
             <groupId>com.cnsugar.ai</groupId>
             <artifactId>seetafaceJNI</artifactId>
-            <version>1.0</version>
+            <version>1.1</version>
             <!--<scope>system</scope>-->
-            <!--<systemPath>${project.basedir}/lib/seetafaceJNI-1.0.jar</systemPath>-->
+            <!--<systemPath>${project.basedir}/lib/seetafaceJNI-1.1.jar</systemPath>-->
        </dependency>
        <dependency>
            <groupId>org.springframework</groupId>
