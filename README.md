@@ -33,7 +33,7 @@ sqlite.conn.maxWaitMillis=60000
 ```
 
 
-5、将seetaface-1.0.jar和依赖包导入到项目中，pom如下:
+5、将seetafaceJNI-1.1.jar和依赖包导入到项目中，pom如下:
 
 ```xml
    <properties>

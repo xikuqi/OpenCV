@@ -6,7 +6,7 @@
 
     <groupId>com.cnsugar.ai</groupId>
     <artifactId>seetafaceJNI</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
 
     <properties>
         <spring.version>4.2.8.RELEASE</spring.version>
