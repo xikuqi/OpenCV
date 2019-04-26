@@ -33,7 +33,7 @@ sqlite.conn.maxWaitMillis=60000
 ```
 
 
-5、将seetafaceJNI-1.1.jar和依赖包导入到项目中，pom如下:
+5、将seetafaceJNI-2.0.jar和依赖包导入到项目中，pom如下:
 
 ```xml
    <properties>
@@ -46,9 +46,9 @@ sqlite.conn.maxWaitMillis=60000
        <dependency>
             <groupId>com.cnsugar.ai</groupId>
             <artifactId>seetafaceJNI</artifactId>
-            <version>1.1</version>
+            <version>2.0</version>
             <!--<scope>system</scope>-->
-            <!--<systemPath>${project.basedir}/lib/seetafaceJNI-1.1.jar</systemPath>-->
+            <!--<systemPath>${project.basedir}/lib/seetafaceJNI-2.0.jar</systemPath>-->
        </dependency>
        <dependency>
            <groupId>org.springframework</groupId>
@@ -149,7 +149,12 @@ sqlite.conn.maxWaitMillis=60000
      * 删除已注册的人脸
      * @param keys
      */
-    void removeRegister(String... keys);    
+    void removeRegister(String... keys);  
+    
+    /**
+     * 清除人脸库数据
+     */
+    void clear();    
     
 ```
 
