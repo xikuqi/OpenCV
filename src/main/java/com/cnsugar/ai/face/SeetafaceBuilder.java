@@ -48,6 +48,12 @@ public class SeetafaceBuilder {
         synchronized (SeetafaceBuilder.class) {
             while (face_db_status == FacedbStatus.LOADING || face_db_status == FacedbStatus.READY) {
                 //等待之前的任务初始化完成
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    break;
+                }
             }
             face_db_status = FacedbStatus.READY;
             new Thread(() -> {
@@ -55,6 +61,14 @@ public class SeetafaceBuilder {
                 loadFaceDb();
             }).start();
         }
+    }
+
+    /**
+     * 返回人脸数据库状态
+     * @return
+     */
+    public static FacedbStatus getFaceDbStatus() {
+        return face_db_status;
     }
 
     private static void init() {

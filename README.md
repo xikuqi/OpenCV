@@ -188,6 +188,17 @@ sqlite.conn.maxWaitMillis=60000
 
     @org.junit.Test
     public void testSearch() throws IOException {
+        SeetafaceBuilder.build();//系统启动时先调用初始化方法
+
+        //等待初始化完成
+        while (SeetafaceBuilder.getFaceDbStatus() == SeetafaceBuilder.FacedbStatus.LOADING || SeetafaceBuilder.getFaceDbStatus() == SeetafaceBuilder.FacedbStatus.READY) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        
         long l = System.currentTimeMillis();
         Result result = FaceHelper.search(FileUtils.readFileToByteArray(new File("F:\\ai\\gtl.jpg")));
         System.out.println("搜索结果：" + result + "， 耗时：" + (System.currentTimeMillis() - l));

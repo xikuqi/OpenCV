@@ -12,8 +12,23 @@ import java.util.Collection;
 
 public class Test {
 
+    private void init() {
+        SeetafaceBuilder.build();//系统启动时先调用初始化方法
+
+        //等待初始化完成
+        while (SeetafaceBuilder.getFaceDbStatus() == SeetafaceBuilder.FacedbStatus.LOADING || SeetafaceBuilder.getFaceDbStatus() == SeetafaceBuilder.FacedbStatus.READY) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     @org.junit.Test
     public void testCompare() throws Exception {
+        init();
+
         String img1 = "F:\\ai\\demo-pic39.jpg";
         String img2 = "F:\\ai\\left_pic_one.jpg";
         System.out.println("result:" + FaceHelper.compare(new File(img1), new File(img2)));
@@ -36,6 +51,8 @@ public class Test {
 
     @org.junit.Test
     public void testSearch() throws IOException {
+        init();
+
         long l = System.currentTimeMillis();
         Result result = FaceHelper.search(FileUtils.readFileToByteArray(new File("F:\\ai\\gtl.jpg")));
         System.out.println("搜索结果：" + result + "， 耗时：" + (System.currentTimeMillis() - l));
