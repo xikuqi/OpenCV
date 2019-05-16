@@ -24,8 +24,8 @@ public class FaceDao {
 
     public static boolean saveOrUpdate(FaceIndex index) {
         try {
-            SqliteUtils.executeUpdate("INSERT OR REPLACE INTO face_img (\"key\",\"img_data\") VALUES (?,?)", new Object[]{index
-                    .getKey(), index.getImgData()});
+            SqliteUtils.executeUpdate("INSERT OR REPLACE INTO face_img (\"key\",\"img_data\",\"width\",\"height\",\"channel\") VALUES (?,?,?,?,?)", new Object[]{index
+                    .getKey(), index.getImgData(), index.getWidth(), index.getHeight(), index.getChannel()});
             SqliteUtils.executeUpdate("INSERT OR REPLACE INTO face_index (\"index\",\"key\") VALUES (?,?)", new Object[]{index
                     .getIndex(), index.getKey()});
             return true;
@@ -57,7 +57,7 @@ public class FaceDao {
     }
 
     public static List<FaceIndex> findFaceImgs(int pageNo, int pageSize) {
-        String sql = "select \"key\",\"img_data\" from face_img " +
+        String sql = "select \"key\",\"img_data\",\"width\",\"height\",\"channel\" from face_img " +
                 " limit " + pageNo * pageSize + "," + pageSize;
         try {
             return SqliteUtils.queryForList(sql, new RowMapper<FaceIndex>() {
@@ -66,6 +66,9 @@ public class FaceDao {
                     FaceIndex face = new FaceIndex();
                     face.setKey(rs.getString("key"));
                     face.setImgData(rs.getBytes("img_data"));
+                    face.setWidth(rs.getInt("width"));
+                    face.setHeight(rs.getInt("height"));
+                    face.setChannel(rs.getInt("channel"));
                     return face;
                 }
             });

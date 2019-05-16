@@ -160,7 +160,7 @@ public class SeetafaceBuilder {
      * @throws IOException
      */
     private static void register(String key, FaceIndex face) {
-        SeetaImageData imageData = new SeetaImageData(256, 256, 3);
+        SeetaImageData imageData = new SeetaImageData(face.getWidth(), face.getHeight(), face.getChannel());
         imageData.data = face.getImgData();
         int index = seeta.register(imageData);
         if (index < 0) {

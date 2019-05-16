@@ -102,6 +102,9 @@ public class FaceHelper {
         FaceIndex face = new FaceIndex();
         face.setKey(key);
         face.setImgData(imageData.data);
+        face.setWidth(imageData.width);
+        face.setHeight(imageData.height);
+        face.setChannel(imageData.channels);
         face.setIndex(index);
         FaceDao.saveOrUpdate(face);
         logger.info("Register face success: key={}, index={}", key, index);
@@ -127,8 +130,11 @@ public class FaceHelper {
         FaceIndex face = new FaceIndex();
         face.setKey(key);
         face.setImgData(imageData.data);
-        face.setIndex(index);
+        face.setWidth(imageData.width);
+        face.setHeight(imageData.height);
+        face.setChannel(imageData.channels);
         FaceDao.saveOrUpdate(face);
+        face.setIndex(index);
         logger.info("Register face success: key={}, index={}", key, index);
         return true;
     }
